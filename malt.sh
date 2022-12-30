@@ -69,6 +69,10 @@ if [ $# -eq 0 ] ; then
     options_menu
     exit 0
 
+elif [ "$1" = "-h" ] || [ "$1" = "-help" ] ; then
+    help_menu
+    exit 0
+
 elif [ "$1" = "-a" ] ; then
     echo "Checking for outdated packages..."
     echo "--------------------------------------------------"
@@ -91,10 +95,6 @@ elif [ "$1" = "-s" ] ; then
         fi
     done
     check_for_updates specific_packages_to_check
-
-elif [ "$1" = "-h" ] || [ "$1" = "-help" ] ; then
-    help_menu
-    exit 0
 fi
 
 echo 
@@ -104,8 +104,7 @@ echo
 if [ ${#outdated_packages[@]} -gt 0 ] ; then
     yes_or_no outdated_packages
     sleep 0.5 
-
-    else
+else
     printf "No packages require updating at this time...\n\n"
     sleep 0.5 
 fi
