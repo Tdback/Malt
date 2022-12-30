@@ -1,0 +1,83 @@
+#+TITLE: Malt: A Brew Package Updater
+
+* Welcome to Malt!
+
+You can't make a good brew if you don't start with the right malt!
+
+** Usage
+
+Malt is a bash script created to further help automate the process of checking for outdated brew packages when using the brew package manager. Instead of executing the following:
+
+#+begin_src shell
+$ brew oudated
+
+$ brew upgrade [package_names ...]
+#+end_src
+
+Malt simplifies the process of checking for outdated packages into one simple command:
+
+#+begin_src shell
+$ malt -a
+#+end_src
+
+If the user wishes to only check for updates for specific packages and upgrade them accordingly, it can be done using the =-s= argument. For example:
+
+#+begin_src 
+$ malt -s sqlite sbcl nmap
+#+end_src
+
+would check for updates for the packages sqlite, sbcl, and nmap. 
+
+If any packages are outdated, the user will be prompted whether or not they would like them to be upgraded. If the user specifies =y=, or yes, brew will run its upgrade command automatically. If the package you entered is not installed or there was a typo, Malt will notify you and skip over that package. If there are no outdated packages, the script will automatically exit. 
+
+If you have trouble remembering Malt's arguments, running =malt= with the =-h= arugment will bring up Malt's help page:
+
+#+begin_src shell
+$ malt -h
+#+end_src
+
+Note: Malt is still a WIP. If any problems arise, please do not hesistate to reach out or open an issue. Thank you!
+
+** Installation
+
+The following command installs malt onto your system, placing the executable within the directory =~/.malt/= and adding an alias to the =~/.zsh_aliases= file. If you are using a shell other than =zsh=, you must change the alias file accordingly. For example, if you are using =bash= you should change =~/.zsh_aliases= to =~/.bash_aliases=. It is the user's preference whether to install the script using =wget= or =curl=:
+
+#+begin_src shell
+$ wget -nc -P ~/.malt/malt.sh https://raw.githubusercontent.com/Tdback/Malt/master/malt.sh &&\
+  echo "alias malt='~/.malt/malt.sh'" >> ~/.zsh_aliases &&\
+  chmod +x ~/.malt/malt.sh
+#+end_src
+
+OR
+
+#+begin_src shell
+$ curl --create-dirs -o ~/.malt/malt.sh \
+  https://raw.githubusercontent.com/Tdback/Malt/master/malt.sh &&\
+  echo "alias malt='~/.malt/malt.sh'" >> ~/.zsh_aliases &&\
+  chmod +x ~/.malt/malt.sh
+#+end_src
+
+After installation, you simply need to restart your shell. For those using =zsh=, run the following command:
+
+#+begin_src shell
+$ source ~/.zshrc 
+#+end_src
+
+** Troubleshooting
+
+Problems may arise if your =zsh= or =bash= environment is not setup to support a separate file for all of your shell aliases. If that is the case, simply change the =malt= alias destination in the download script to =~/.zshrc=, or =~/.bashrc= if you are using the =bash= terminal. The following is an example of installing the malt script and adding the alias to the =~/.zshrc= source file:
+
+#+begin_src shell
+$ wget -nc -P ~/.malt/malt.sh https://raw.githubusercontent.com/Tdback/Malt/master/malt.sh &&\
+  echo "alias malt='~/.malt/malt.sh'" >> ~/.zshrc &&\
+  chmod +x ~/.malt/malt.sh
+#+end_src
+
+If you instead wish to add support for a separate aliases file, append the following to your =~/.zshrc= file:
+
+#+begin_src shell
+# Check for aliases in .zsh_aliases
+if [ -f ~/.zsh_aliases ] ; then
+    source ~/.zsh_aliases
+fi
+#+end_src
