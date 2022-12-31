@@ -19,16 +19,25 @@ all_packages=($(echo $(brew list)))
 function yes_or_no {
     outdated=$1[@]; local arr=("${!outdated}")
 
+    if [ "${#arr[@]}" -eq 1 ] ; then
+        echo "You have 1 outdated package:"
+    else
+        echo "You have ${#arr[@]} outdated packages:" 
+    fi
+    for package in "${arr[@]}" ; do
+        tput bold; tput setaf 1
+        echo "${package}"
+        tput sgr0
+    done
+    echo
+
     while true ; do
-        echo "--------------------------------------------------"
         read -p "Would you like to update these packages? [y\n]: " yn
-        echo "--------------------------------------------------"
         case $yn in
-            [Yy]) echo "Updating packages..."
-                  brew upgrade "${arr[@]}";
+            [Yy]) brew upgrade "${arr[@]}";
                   printf "\nUpdate complete!\n\n";
                   break;;
-            [Nn]) printf "Update aborted...\n\n";
+            [Nn]) printf "\nUpdate aborted...\n\n";
                   break;;
             *) echo "Please enter 'y' or 'n'";;
         esac
@@ -43,11 +52,15 @@ function check_for_updates {
 
     for package in "${arr[@]}" ; do
         if echo "${outdated_cmd}" | grep -Eq "${package}" ; then
-            printf " \xE2\x9D\x8C  ${package} is outdated.\n"
+            tput bold; tput setaf 1
+            printf "|-| ${package} is outdated.\n"
+            tput sgr0
             outdated_packages+=("${package}")
             sleep 0.1
         else
-            printf " \xE2\x9C\x94  ${package} is up to date.\n"
+            tput setaf 2
+            printf "|+| ${package} is up to date.\n"
+            tput sgr0
             sleep 0.1
         fi
     done
@@ -61,42 +74,49 @@ function help_menu {
 }
 
 function options_menu {
-    printf "usage: malt [-h | -a | -s package_name ...]\n"
+    echo "usage: malt [-h | -a | -s package_name ...]" 1>&2; exit 1;
 }
 
-# User specifies with flags what packages to check
-if [ $# -eq 0 ] ; then
+# Options menu if no arguments are passed
+if [ ${#} -eq 0 ] ; then
     options_menu
-    exit 0
-
-elif [ "$1" = "-h" ] || [ "$1" = "-help" ] ; then
-    help_menu
-    exit 0
-
-elif [ "$1" = "-a" ] ; then
-    echo "Checking for outdated packages..."
-    echo "--------------------------------------------------"
-    check_for_updates all_packages
-
-elif [ "$1" = "-s" ] ; then
-    echo "Checking for outdated packages..."
-    echo "--------------------------------------------------"
-    shift
-    while [ $# -gt 0 ] ; do
-        user_packages_to_check+=("$1")
-        shift
-    done
-    for package in "${user_packages_to_check[@]}" ; do
-        if echo "${all_packages[@]}" | grep -Eq "${package}" ; then
-            specific_packages_to_check+=("${package}")
-        else
-            printf "|!| ${package} does not exist or is not installed.\n"
-            sleep 0.1
-        fi
-    done
-    check_for_updates specific_packages_to_check
 fi
 
+# User specifies with flags what packages to check
+while getopts "has" arg; do
+    case "${arg}" in
+        h)
+            help_menu
+            exit 0
+            ;;
+        a)
+            echo "Checking for outdated packages..."
+            echo "--------------------------------------------------"
+            check_for_updates all_packages
+            ;;
+        s)
+            echo "Checking for outdated packages..."
+            echo "--------------------------------------------------"
+            shift $((OPTIND - 1))
+            user_packages_to_check=("${@}")
+            for package in "${user_packages_to_check[@]}" ; do
+                if echo "${all_packages[@]}" | grep -Eq "${package}" ; then
+                    specific_packages_to_check+=("${package}")
+                else
+                    tput setaf 3
+                    printf "|!| ${package} does not exist or is not installed.\n"
+                    tput sgr0
+                    sleep 0.1
+                fi
+            done
+            check_for_updates specific_packages_to_check
+            ;;
+        \?)
+            echo "Invalid option. For help or to view Malt's options, use \"-h\"."
+            exit 2
+            ;;
+    esac
+done
 echo 
 
 # Prompt user to updated outdated packages OR exit early
