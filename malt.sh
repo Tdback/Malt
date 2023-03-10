@@ -8,21 +8,19 @@
 # Created  : Tue Dec 27, 2022
 # Modified : Fri Dec 30, 2022
 
-# Specify packages to always check for updates
-specific_packages_to_check=()
-user_packages_to_check=()
-
 # Initialize packages to check for updates
-all_packages=($(echo $(brew list)))
+while IFS= read -r line ; do
+	all_packages+=("${line}")
+done < <(brew list)
 
 # Helper function to ask user to update their packages
 function yes_or_no {
-    outdated=$1[@]; local arr=("${!outdated}")
+    outdated="$1[@]"; local arr=("${!outdated}")
 
     if [ "${#arr[@]}" -eq 1 ] ; then
         echo "You have 1 outdated package:"
     else
-        echo "You have ${#arr[@]} outdated packages:" 
+        echo "You have %s outdated packages:" "${#arr[@]}" 
     fi
     for package in "${arr[@]}" ; do
         tput bold; tput setaf 1
@@ -32,14 +30,17 @@ function yes_or_no {
     echo
 
     while true ; do
-        read -p "Would you like to update these packages? [y\n]: " yn
+        read -rp "Would you like to update these packages? [y\n]: " yn
         case $yn in
             [Yy]) brew upgrade "${arr[@]}";
                   printf "\nUpdate complete!\n\n";
-                  break;;
+                  break
+		  ;;
             [Nn]) printf "\nUpdate aborted...\n\n";
-                  break;;
-            *) echo "Please enter 'y' or 'n'";;
+                  break
+		  ;;
+            *) echo "Please enter 'y' or 'n'"
+		  ;;
         esac
     done
 }
@@ -48,18 +49,18 @@ function yes_or_no {
 function check_for_updates {
     outdated_cmd=$(brew outdated)
 
-    packages_to_check=$1[@]; local arr=("${!packages_to_check}")
+    packages_to_check="$1[@]"; local arr=("${!packages_to_check}")
 
     for package in "${arr[@]}" ; do
         if echo "${outdated_cmd}" | grep -Eq "${package}" ; then
             tput bold; tput setaf 1
-            printf "|-| ${package} is outdated.\n"
+            printf "[-] %s is outdated.\n" "${package}" 
             tput sgr0
             outdated_packages+=("${package}")
             sleep 0.1
         else
             tput setaf 2
-            printf "|+| ${package} is up to date.\n"
+            printf "[+] %s is up to date.\n" "${package}" 
             tput sgr0
             sleep 0.1
         fi
@@ -83,7 +84,7 @@ if [ ${#} -eq 0 ] ; then
 fi
 
 # User specifies with flags what packages to check
-while getopts "has" arg; do
+while getopts "has" arg ; do
     case "${arg}" in
         h)
             help_menu
@@ -104,7 +105,7 @@ while getopts "has" arg; do
                     specific_packages_to_check+=("${package}")
                 else
                     tput setaf 3
-                    printf "|!| ${package} does not exist or is not installed.\n"
+                    printf "[!] %s does not exist or is not installed.\n" "${package}" 
                     tput sgr0
                     sleep 0.1
                 fi
@@ -121,7 +122,7 @@ echo
 
 # Prompt user to updated outdated packages OR exit early
 # if no packages need updating.
-if [ ${#outdated_packages[@]} -gt 0 ] ; then
+if [ "${#outdated_packages[@]}" -gt 0 ] ; then
     yes_or_no outdated_packages
     sleep 0.5 
 else
@@ -129,9 +130,9 @@ else
     sleep 0.5 
 fi
 
-goodbye_messages=("Hack and be merry!\n\n" "Happy hacking!\n\n" "Hack away, hack away!\n\n")
-random_goodbye_index=$(( $RANDOM % ${#goodbye_messages[@]} ))
+goodbye_messages=("Hack and be merry!" "Happy hacking!" "Hack away, hack away!")
+random_goodbye_index=$(( RANDOM % ${#goodbye_messages[@]} ))
 
 echo "--------------------------------------------------"
-printf "${goodbye_messages[random_goodbye_index]}"
+printf "%s\n\n" "${goodbye_messages[random_goodbye_index]}"
 exit 0
