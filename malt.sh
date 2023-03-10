@@ -1,12 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Malt!
-# A script to check for certain package updates using brew,
-# and updating them automatically if they are outdated.
-
+#===============================================================================
+#
 # Author   : Tyler Dunneback
 # Created  : Tue Dec 27, 2022
-# Modified : Fri Dec 30, 2022
+# Desc     : A POSIX compliant front-end wrapper for the brew package updater, 
+#            which checks for outdated packages and prompts a user to perform 
+#            upgrades on any outdated packages it finds. Users can also specify
+#            individual packages they wish to upgrade.
+#
+#===============================================================================
 
 # Initialize packages to check for updates
 while IFS= read -r line ; do
