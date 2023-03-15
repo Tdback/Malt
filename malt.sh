@@ -61,12 +61,12 @@ function check_for_updates {
             printf "[-] %s is outdated.\n" "${package}" 
             tput sgr0
             outdated_packages+=("${package}")
-            sleep 0.1
+            sleep 0.05
         else
             tput setaf 2
             printf "[+] %s is up to date.\n" "${package}" 
             tput sgr0
-            sleep 0.1
+            sleep 0.05
         fi
     done
 }
@@ -111,7 +111,7 @@ while getopts "has" arg ; do
                     tput setaf 3
                     printf "[!] %s does not exist or is not installed.\n" "${package}" 
                     tput sgr0
-                    sleep 0.1
+            	    sleep 0.05
                 fi
             done
             check_for_updates specific_packages_to_check
@@ -128,10 +128,10 @@ echo
 # if no packages need updating.
 if [ "${#outdated_packages[@]}" -gt 0 ] ; then
     yes_or_no outdated_packages
-    sleep 0.5 
+    sleep 0.25 
 else
     printf "No packages require updating at this time...\n\n"
-    sleep 0.5 
+    sleep 0.25 
 fi
 
 goodbye_messages=("Hack and be merry!" "Happy hacking!" "Hack away, hack away!")
