@@ -5,10 +5,10 @@
 #
 # Author   : Tyler Dunneback
 # Created  : Tue Dec 27, 2022
-# Desc     : A POSIX compliant front-end wrapper for the brew package updater, 
-#            which checks for outdated packages and prompts a user to perform 
-#            upgrades on any outdated packages it finds. Users can also specify
-#            individual packages they wish to upgrade.
+# Desc     : A front-end wrapper for the brew package updater, which checks for 
+#            outdated packages and prompts a user to perform upgrades on any 
+#            outdated packages it finds. Users can also specify individual 
+#            packages they wish to upgrade.
 #
 #===============================================================================
 
