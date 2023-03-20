@@ -13,7 +13,7 @@
 #===============================================================================
 
 # Initialize packages to check for updates
-while IFS= read -r line ; do
+while IFS= read -r line; do
 	all_packages+=("${line}")
 done < <(brew list)
 
@@ -21,19 +21,19 @@ done < <(brew list)
 function yes_or_no {
     outdated="$1[@]"; local arr=("${!outdated}")
 
-    if [ "${#arr[@]}" -eq 1 ] ; then
+    if [ "${#arr[@]}" -eq 1 ]; then
         echo "You have 1 outdated package:"
     else
         echo "You have %s outdated packages:" "${#arr[@]}" 
     fi
-    for package in "${arr[@]}" ; do
+    for package in "${arr[@]}"; do
         tput bold; tput setaf 1
         echo "${package}"
         tput sgr0
     done
     echo
 
-    while true ; do
+    while :; do
         read -rp "Would you like to update these packages? [y\n]: " yn
         case $yn in
             [Yy]) brew upgrade "${arr[@]}";
@@ -55,8 +55,8 @@ function check_for_updates {
 
     packages_to_check="$1[@]"; local arr=("${!packages_to_check}")
 
-    for package in "${arr[@]}" ; do
-        if echo "${outdated_cmd}" | grep -Eq "${package}" ; then
+    for package in "${arr[@]}"; do
+        if echo "${outdated_cmd}" | grep -Eq "${package}"; then
             tput bold; tput setaf 1
             printf "[-] %s is outdated.\n" "${package}" 
             tput sgr0
@@ -83,12 +83,12 @@ function options_menu {
 }
 
 # Options menu if no arguments are passed
-if [ ${#} -eq 0 ] ; then
+if [ ${#} -eq 0 ]; then
     options_menu
 fi
 
 # User specifies with flags what packages to check
-while getopts "has" arg ; do
+while getopts "has" arg; do
     case "${arg}" in
         h)
             help_menu
@@ -104,8 +104,8 @@ while getopts "has" arg ; do
             echo "--------------------------------------------------"
             shift $((OPTIND - 1))
             user_packages_to_check=("${@}")
-            for package in "${user_packages_to_check[@]}" ; do
-                if echo "${all_packages[@]}" | grep -Eq "${package}" ; then
+            for package in "${user_packages_to_check[@]}"; do
+                if echo "${all_packages[@]}" | grep -Eq "${package}"; then
                     specific_packages_to_check+=("${package}")
                 else
                     tput setaf 3
@@ -126,7 +126,7 @@ echo
 
 # Prompt user to updated outdated packages OR exit early
 # if no packages need updating.
-if [ "${#outdated_packages[@]}" -gt 0 ] ; then
+if [ "${#outdated_packages[@]}" -gt 0 ]; then
     yes_or_no outdated_packages
     sleep 0.25 
 else
