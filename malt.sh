@@ -108,12 +108,12 @@ while getopts "has" arg; do
       ;;
     a)
       echo "Checking for outdated packages..."
-        printf "%.0s-" {1..80} && echo
+      printf "%.0s-" {1..80} && echo
       check_for_updates all_packages
       ;;
     s)
       echo "Checking for outdated packages..."
-        printf "%.0s-" {1..80} && echo
+      printf "%.0s-" {1..80} && echo
       shift $((OPTIND - 1))
       user_packages_to_check=("${@}")
       for package in "${user_packages_to_check[@]}"; do
