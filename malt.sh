@@ -33,12 +33,12 @@ function yes_or_no {
   num=0
   tput bold; tput setaf 1
   for package in "${arr[@]}"; do
-	printf "  %s  " "${package}"
-	(( num+=${#package} ))
-    	if [ "${num}" -ge 50 ]; then
-    	printf "\n"	
-		num=0
-	fi
+    printf "  %s  " "${package}"
+    (( num+=${#package} ))
+    if [ "${num}" -ge 50 ]; then
+      printf "\n"	
+      num=0
+    fi
   done
   tput sgr0
 
@@ -49,14 +49,14 @@ function yes_or_no {
     read -rp "Would you like to update these packages? [y/n]: " yn
     case $yn in
       [Yy]) brew upgrade "${arr[@]}";
-          printf "\nUpdate complete!\n\n";
-          break
-	  ;;
+        printf "\nUpdate complete!\n\n";
+        break
+	;;
       [Nn]) printf "\nUpdate aborted...\n\n";
-          break
-	  ;;
+        break
+	;;
       *) echo "Please enter 'y' or 'n'"
-	  ;;
+	;;
     esac
   done
 }
@@ -108,12 +108,12 @@ while getopts "has" arg; do
       ;;
     a)
       echo "Checking for outdated packages..."
-	  printf "%.0s-" {1..80} && echo
+        printf "%.0s-" {1..80} && echo
       check_for_updates all_packages
       ;;
     s)
       echo "Checking for outdated packages..."
-	  printf "%.0s-" {1..80} && echo
+        printf "%.0s-" {1..80} && echo
       shift $((OPTIND - 1))
       user_packages_to_check=("${@}")
       for package in "${user_packages_to_check[@]}"; do
