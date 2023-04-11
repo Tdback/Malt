@@ -20,7 +20,7 @@ while IFS= read -r line; do
 done < <(brew list)
 
 # Helper function to ask user to update their packages
-function yes_or_no {
+yes_or_no () {
   outdated="$1[@]"; local arr=("${!outdated}")
 
   if [ "${#arr[@]}" -eq 1 ]; then
@@ -62,7 +62,7 @@ function yes_or_no {
 }
 
 # Checks for updates for packages passed in based on flags used
-function check_for_updates {
+check_for_updates () {
   outdated_cmd=$(brew outdated)
 
   packages_to_check="$1[@]"; local arr=("${!packages_to_check}")
@@ -83,19 +83,19 @@ function check_for_updates {
   done
 }
 
-function help_menu {
+help_menu () {
   printf "Welcome to Malt, the Brew package updater!
   -h : Help page.
   -a : Check all packages for updates.
   -s : Check specific packages for updates.\n"
 }
 
-function options_menu {
+options_menu () {
   echo "usage: malt [-h | -a | -s package_name ...]" 1>&2; exit 1;
 }
 
 # Options menu if no arguments are passed
-if [ ${#} -eq 0 ]; then
+if [ "${#}" -eq 0 ]; then
   options_menu
 fi
 
